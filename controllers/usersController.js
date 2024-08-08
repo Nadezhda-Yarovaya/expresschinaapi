@@ -80,6 +80,7 @@ const addTokensToUser = (foundUser, accessToken, refreshToken, res, next) => {
             accessToken: 'Bearer ' + updatedUser.tokens[0].token,
             refreshToken
           };
+          console.log('loginToSend: ', toSend);
           res.status(201).send(toSend);
           }).catch((err) => {
             if (err.name === 'MongoServerError' && err.code === 11000) {

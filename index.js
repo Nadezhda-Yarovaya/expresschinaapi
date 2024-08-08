@@ -19,6 +19,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const router = require('./routes');
 
 const { errorHandler } = require('./middlewares/errorHandler');
+const { dbPath } = require('./constants/consts');
 
 const { NODE_ENV, PORT = 3000, MONGO_URL } = process.env;
 
@@ -32,6 +33,7 @@ app.use(cookieParser());
 const whiteList = [
   'https://chinese.ynstudios.ru',
   'http://localhost:3007',
+  'http://localhost:3005',
 ];
 
 app.use(
@@ -56,7 +58,7 @@ app.use(errorLogger);
 mongoose.connect(
   NODE_ENV === 'production'
     ? `${MONGO_URL}`
-    : 'mongodb://localhost:27017/moviesdb-dev',
+    : dbPath,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
