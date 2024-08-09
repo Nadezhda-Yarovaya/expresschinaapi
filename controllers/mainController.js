@@ -6,11 +6,11 @@ module.exports.getCardsByNumber =  (req, res, next) => {
     .then((alltheCards) => {
         alltheCards.sort( () => .5 - Math.random() ); // saying its a bad solution for shuffle
         const cutCards = alltheCards.slice(0, numb);
-    console.log('alltheCards works', alltheCards);
-    res.status(200).send(alltheCards);
+    res.status(201).send(cutCards);
     })
-    .catch((err) => console.log(err));
-    res.send(movies);
+    .catch((err) => {
+        next(err);
+      });
 
 }
     
