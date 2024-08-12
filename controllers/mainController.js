@@ -13,4 +13,27 @@ module.exports.getCardsByNumber =  (req, res, next) => {
       });
 
 }
-    
+
+module.exports.createCard = (req, res, next) => {
+    console.log(req.body);
+    const {id, source, taskEn, chin, pinyin} = req.body;
+    Card.create({id, source, taskEn, chin, pinyin})
+    .then((createdCard) => {
+        // access to send
+        const toSend = {
+          success: true,
+          card: createdCard,
+        };
+        console.log('sending: ', toSend);
+        res.status(201)
+          .send(toSend);
+      })
+        .catch((err) => {
+            console.log('err: ', err);
+          /*if (err.name === 'MongoServerError' && err.code === 11000) {
+            next(new ConflictError(alreadyExistsMessage));
+          } else {
+            next(err);
+          }*/
+        });
+}
