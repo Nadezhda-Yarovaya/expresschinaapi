@@ -8,7 +8,7 @@ const { UnauthorizedError } = require('../errors/UnauthorizedError');
 
 const {
   notFoundMessage, wrongDataMessage, alreadyExistsMessage,
-  wrongLoginDataMessage, successLoginMessage, successLogOutMessage,
+  wrongLoginDataMessage, successLoginMessage, successLogOutMessage, errorYes
 } = require('../constants/messages');
 
 const SALT_ROUND = 10;
@@ -99,7 +99,7 @@ const addTokensToUser = (foundUser, accessToken, refreshToken, res, next) => {
       .then((foundUser) => {
         console.log('user: ', foundUser);
         bcrypt.compare(password, foundUser.password).then((matched) => {
-          if (!matched) { return Promise.reject(new UnauthorizedError(wrongLoginDataMessage)); }
+          if (!matched) { return Promise.reject(new UnauthorizedError( wrongLoginDataMessage)); }
           // create both tokens          
         maxAgeReAccess = 1000 * 60 * 20; //20 mintues    
         const accessToken = generateToken(

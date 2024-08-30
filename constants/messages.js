@@ -12,6 +12,7 @@ const wrongMovieInfoMessage = 'Неверные данные фильма';
 const minimumSymbMessage = 'Минимум 2 символа, но получили {VALUE}';
 const authorizeMessage = 'Необходима авторизация';
 const noAccessMessage = 'У вас нет доступа';
+const errorYes = true;
 
 module.exports = {
   notFoundMessage,
@@ -28,4 +29,5 @@ module.exports = {
   minimumSymbMessage,
   authorizeMessage,
   noAccessMessage,
+  errorYes
 };
