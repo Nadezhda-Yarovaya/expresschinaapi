@@ -35,7 +35,6 @@ const whiteList = [
   'http://localhost:3007',
   'http://localhost:3005',
 ];
-
 app.use(
   cors({
     origin: (origin, callback) => {
