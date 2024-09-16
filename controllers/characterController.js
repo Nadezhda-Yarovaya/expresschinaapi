@@ -31,9 +31,9 @@ module.exports.createCardMultiple = (req, res, next) => {
     const bodyArray = req.body;
 
     bodyArray.forEach((item) => {
-        const {id, character, pinyin, translate} = item;
+        const {id, character, pinyin, translate, cat} = item;
     
-    Character.create({id, character, pinyin, translate})
+    Character.create({id, character, pinyin, translate, cat})
     .then((createdCard) => {
         // access to send
         const toSend = {

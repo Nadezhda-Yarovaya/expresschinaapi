@@ -28,7 +28,15 @@ const userSchema = new mongoose.Schema({
   },
   tokens: [
     {token: {type: String},}
-  ]
+  ],
+  favsDaily: {
+    type: [String],
+    default: [],
+  },
+  favsCh: {
+    type: [String],
+    default: [],
+  },
 });
 
 module.exports = mongoose.model('user', userSchema);

@@ -2,7 +2,7 @@ const express = require('express');
 
 const authRouter = express.Router();
 
-const { registerUser, loginUser, makerefreshToken, getUser } = require('../controllers/usersController');
+const { registerUser, loginUser, makerefreshToken, getUser, addToFavs, addToFavsCh } = require('../controllers/usersController');
 
 const {
   validateRegisterUser, validateSigninUser,
@@ -11,7 +11,10 @@ const {
 authRouter.post('/auth/register', validateRegisterUser, registerUser);
 authRouter.post('/auth/login', validateSigninUser, loginUser);
 authRouter.get('/auth/user', getUser);
-authRouter.post('/auth/token', makerefreshToken);
+authRouter.get('/auth/token', makerefreshToken);
+authRouter.put('/user/addtofav', addToFavs);
+authRouter.put('/user/addtofavch', addToFavsCh);
+
 // authRouter.delete('/signout', logoutUser);
 
 exports.authRouter = authRouter;

@@ -13,20 +13,22 @@ const {
 
 const SALT_ROUND = 10;
 
-module.exports.getUser = (req, res, next) => {
+module.exports.getUser = (req, res, next) => {  
   const { authorization } = req.headers;
   const keytoken = authorization.split(' ')[1];
   const id = encodeToken(keytoken)._id;
-  console.log('DECODED: ', id);
+  console.log('user id: ', id);
   User.findById(id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError("Запрашиваемый пользователь не найден");
-      }
-      
+      }      
       const toSend = {
         name: user.name,
         email: user.email,
+        _id: user._id,
+        favsDaily: user.favsDaily,
+        favsCh: user.favsCh,
       }
       console.log('user found by id to send: ', toSend);
       res.status(201).send(toSend);
@@ -35,6 +37,82 @@ module.exports.getUser = (req, res, next) => {
       next(err);
     });
 }
+
+module.exports.addToFavs = (req, res, next) => {
+  const opts = { new: true, runValidators: true };
+  const { authorization } = req.headers;
+  const keytoken = authorization.split(' ')[1];
+  const id = encodeToken(keytoken)._id;
+
+  const {favoriteCard} = req.body;
+  console.log('fav: ', favoriteCard);
+
+  User.findById(id)
+  .then((user) => {
+    if (!user) {
+      throw new NotFoundError("Запрашиваемый пользователь не найден");
+    }      
+  console.log('favsDaily: ', user.favsDaily); 
+    
+  User.findByIdAndUpdate(id,
+    {
+      $set: {
+        favsDaily: [...user.favsDaily, favoriteCard],
+      },
+    },
+    opts
+  )
+    .then((updated) => {
+      res.status(200).send(updated.favsDaily);
+    })
+    .catch(next);
+
+  })
+  .catch((err) => {
+    next(err);
+  });
+}
+
+
+module.exports.addToFavsCh = (req, res, next) => {
+  
+  const opts = { new: true, runValidators: true };
+  const { authorization } = req.headers;
+  const keytoken = authorization.split(' ')[1];
+  const id = encodeToken(keytoken)._id;
+
+  const {favoriteCharacter} = req.body;
+
+  console.log('in add to fav ch', req.body);
+
+  User.findById(id)
+  .then((user) => {
+    if (!user) {
+      throw new NotFoundError("Запрашиваемый пользователь не найден");
+    }      
+    
+  User.findByIdAndUpdate(id,
+    {
+      $set: {
+        favsCh: [...user.favsCh, favoriteCharacter],
+      },
+    },
+    opts
+  )
+    .then((updated) => {
+      res.status(200).send(updated.favsCh);
+    })
+    .catch(next);
+
+  })
+  .catch((err) => {
+    next(err);
+  });
+  
+}
+
+
+
 
 module.exports.registerUser = (req, res, next) => {
     const { name, email, password } = req.body;
@@ -80,7 +158,7 @@ const addTokensToUser = (foundUser, accessToken, refreshToken, res, next) => {
             accessToken: 'Bearer ' + updatedUser.tokens[0].token,
             refreshToken
           };
-          console.log('loginToSend: ', toSend);
+          // console.log('sending user with tokens: ', toSend);
           res.status(201).send(toSend);
           }).catch((err) => {
             if (err.name === 'MongoServerError' && err.code === 11000) {
@@ -132,13 +210,12 @@ const addTokensToUser = (foundUser, accessToken, refreshToken, res, next) => {
       // 2 - find user by decoded refresh id and access token in the base 
 
       // delete this write 
-        const { token } = req.body;
-        const id = encodeToken(token)._id;
-        console.log('token: ', token, '; encoded: ', id);
-        
+
+      const { authorization } = req.headers; // no bearer for this token
+      const id = encodeToken(authorization)._id; 
         
 
-        User.findById(id)
+    User.findById(id)
     .then((foundUser) => {
       if (!foundUser) {
         throw new NotFoundError("Запрашиваемый пользователь не найден");
