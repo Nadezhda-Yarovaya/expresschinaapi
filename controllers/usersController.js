@@ -175,7 +175,7 @@ const addTokensToUser = (foundUser, accessToken, refreshToken, res, next) => {
       .select('+password')
       .orFail(new NotFoundError(wrongLoginDataMessage))
       .then((foundUser) => {
-        console.log('user: ', foundUser);
+        console.log('user in login: ', foundUser);
         bcrypt.compare(password, foundUser.password).then((matched) => {
           if (!matched) { return Promise.reject(new UnauthorizedError( wrongLoginDataMessage)); }
           // create both tokens          
@@ -186,7 +186,7 @@ const addTokensToUser = (foundUser, accessToken, refreshToken, res, next) => {
             maxAgeRefresh = 1000 * 60 * 60 * 24 * 2; // 2 days 
           const refreshToken = generateToken({ _id: foundUser._id }, maxAgeRefresh); //Refresh
           // cookie is set on the front somehow...
-          console.log('id: ', foundUser._id);
+          console.log('id in login: ', foundUser._id);
           // saving token to users DB
           addTokensToUser(foundUser, accessToken, refreshToken, res, next);
           
@@ -212,6 +212,7 @@ const addTokensToUser = (foundUser, accessToken, refreshToken, res, next) => {
       // delete this write 
 
       const { authorization } = req.headers; // no bearer for this token
+      console.log('headersuath: ', authorization);
       const id = encodeToken(authorization)._id; 
         
 
@@ -241,3 +242,26 @@ const addTokensToUser = (foundUser, accessToken, refreshToken, res, next) => {
       return next(err);
     }
   };
+
+
+  module.exports.logoutUser = (req, res, next) => {
+    try {
+      res.cookie('accessTemp', 'delete', {
+        maxAge: 0,
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+      });
+      res.cookie('chinesetoken', 'delete', {
+        maxAge: 0,
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+      });
+  
+      res.send({ message: 'cookie deleted' });
+      res.end();
+    } catch (err) {
+      next(err);
+    }
+  }
