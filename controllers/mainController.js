@@ -37,3 +37,34 @@ module.exports.createCard = (req, res, next) => {
           }*/
         });
 }
+
+module.exports.getAllFavs =  (req, res, next) => {
+console.log('get Favs: ', req.body);
+
+Card.find({}) // тут и не сделано вывод только избранных
+.then((foundFavs) => {
+  foundFavs.sort( () => .5 - Math.random() ); 
+res.status(201).send(foundFavs);
+})
+.catch((err) => {
+    next(err);
+  });
+}
+
+module.exports.getBySource =  (req, res, next) => {
+  const { source } = req.params;
+  console.log('source: ', source);
+  
+  Card.find({ source: source })
+  .then((foundBySource) => {
+    // foundFavs.sort( () => .5 - Math.random() ); 
+    console.log('foundBySource: ', foundBySource);
+    const toSend = {text: 'text so'};
+    console.log('text to send : ', toSend);
+  res.status(201).send(toSend);
+  })
+  .catch((err) => {
+      next(err);
+    });
+    
+  }
