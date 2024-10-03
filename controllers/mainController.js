@@ -40,10 +40,13 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.getAllFavs =  (req, res, next) => {
 console.log('get Favs: ', req.body);
+const favsIdlist = req.body;
 
 Card.find({}) // тут и не сделано вывод только избранных
-.then((foundFavs) => {
-  foundFavs.sort( () => .5 - Math.random() ); 
+.then((foundAll) => {
+  const foundFavs = foundAll.filter((item) => favsIdlist.includes(item.id));
+  console.log('filtered: ', foundFavs);
+  // foundFavs.sort( () => .5 - Math.random() ); 
 res.status(201).send(foundFavs);
 })
 .catch((err) => {
@@ -53,15 +56,13 @@ res.status(201).send(foundFavs);
 
 module.exports.getBySource =  (req, res, next) => {
   const { source } = req.params;
-  console.log('source: ', source);
+  console.log('source i took: ', source);
   
   Card.find({ source: source })
   .then((foundBySource) => {
     // foundFavs.sort( () => .5 - Math.random() ); 
     console.log('foundBySource: ', foundBySource);
-    const toSend = {text: 'text so'};
-    console.log('text to send : ', toSend);
-  res.status(201).send(toSend);
+  res.status(201).send(foundBySource);
   })
   .catch((err) => {
       next(err);
